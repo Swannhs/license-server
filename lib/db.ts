@@ -103,3 +103,19 @@ export const deleteLicense = async (id: string) => {
     await License.findByIdAndDelete(id);
     return { success: true };
 };
+
+export const editLicense = async (id: string, updates: { expiresAt?: Date | null, allowedDomain?: string | null }) => {
+    await connectDb();
+    const license = await License.findByIdAndUpdate(
+        id,
+        { $set: updates },
+        { new: true }
+    );
+    return license ? {
+        id: license._id.toString(),
+        username: license.username,
+        key: license.key,
+        expiresAt: license.expiresAt,
+        allowedDomain: license.allowedDomain
+    } : null;
+};
