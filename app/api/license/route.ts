@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addLicense, getLicense, initDb } from '@/lib/db';
 
-// Initialize the database when the server starts
-initDb();
-
 export async function POST(req: NextRequest) {
     try {
         const { username, key } = await req.json();

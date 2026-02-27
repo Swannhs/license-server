@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Trash2, KeyRound, Copy, Check, Users, ShieldCheck } from 'lucide-react';
 
 interface License {
-    id: number;
+    id: string;
     username: string;
     key: string;
 }
@@ -64,7 +64,7 @@ export default function AdminPage() {
         }
     };
 
-    const deleteLicense = async (id: number) => {
+    const deleteLicense = async (id: string) => {
         if (!confirm('Are you sure you want to delete this license?')) return;
 
         try {

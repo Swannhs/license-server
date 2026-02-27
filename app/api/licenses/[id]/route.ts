@@ -4,8 +4,8 @@ import { deleteLicense } from '@/lib/db';
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const p = await params;
-        const id = parseInt(p.id, 10);
-        if (isNaN(id)) {
+        const id = p.id;
+        if (!id) {
             return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
         }
         await deleteLicense(id);
