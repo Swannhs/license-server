@@ -72,3 +72,39 @@ export const getLicense = async (username: string) => {
         );
     });
 };
+
+export const getAllLicenses = async () => {
+    const db = await getDb();
+    return new Promise((resolve, reject) => {
+        db.all(
+            'SELECT * FROM licenses ORDER BY id DESC',
+            [],
+            (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+                db.close();
+            }
+        );
+    });
+};
+
+export const deleteLicense = async (id: number) => {
+    const db = await getDb();
+    return new Promise((resolve, reject) => {
+        db.run(
+            'DELETE FROM licenses WHERE id = ?',
+            [id],
+            function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ success: true });
+                }
+                db.close();
+            }
+        );
+    });
+};
