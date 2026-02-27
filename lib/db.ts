@@ -43,6 +43,14 @@ const LicenseSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
+    },
+    expiresAt: {
+        type: Date,
+        default: null,
+    },
+    allowedDomain: {
+        type: String,
+        default: null,
     }
 });
 
@@ -52,23 +60,42 @@ export const initDb = async () => {
     await connectDb();
 };
 
-export const addLicense = async (username: string, key: string) => {
+export const addLicense = async (username: string, key: string, expiresAt: Date | null, allowedDomain: string | null) => {
     await connectDb();
-    const license = new License({ username, key });
+    const license = new License({ username, key, expiresAt, allowedDomain });
     await license.save();
-    return { id: license._id.toString(), username: license.username, key: license.key };
+    return {
+        id: license._id.toString(),
+        username: license.username,
+        key: license.key,
+        expiresAt: license.expiresAt,
+        allowedDomain: license.allowedDomain
+    };
 };
 
 export const getLicense = async (username: string) => {
     await connectDb();
     const license = await License.findOne({ username });
-    return license ? { id: license._id.toString(), username: license.username, key: license.key } : null;
+    return license ? {
+        id: license._id.toString(),
+        username: license.username,
+        key: license.key,
+        expiresAt: license.expiresAt,
+        allowedDomain: license.allowedDomain
+    } : null;
 };
 
 export const getAllLicenses = async () => {
     await connectDb();
     const licenses = await License.find().sort({ createdAt: -1 });
-    return licenses.map(l => ({ id: l._id.toString(), username: l.username, key: l.key }));
+    return licenses.map(l => ({
+        id: l._id.toString(),
+        username: l.username,
+        key: l.key,
+        createdAt: l.createdAt,
+        expiresAt: l.expiresAt,
+        allowedDomain: l.allowedDomain
+    }));
 };
 
 export const deleteLicense = async (id: string) => {

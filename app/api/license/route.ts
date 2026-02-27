@@ -3,13 +3,22 @@ import { addLicense, getLicense, initDb } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
     try {
-        const { username, key } = await req.json();
+        const { username, key, duration, allowedDomain } = await req.json();
 
         if (!username || !key) {
             return NextResponse.json({ error: 'Username and key are required' }, { status: 400 });
         }
 
-        const newLicense = await addLicense(username, key);
+        let expiresAt = null;
+        if (duration && duration !== 'lifetime') {
+            const months = parseInt(duration, 10);
+            if (!isNaN(months)) {
+                expiresAt = new Date();
+                expiresAt.setMonth(expiresAt.getMonth() + months);
+            }
+        }
+
+        const newLicense = await addLicense(username, key, expiresAt, allowedDomain || null);
         return NextResponse.json(newLicense, { status: 201 });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
